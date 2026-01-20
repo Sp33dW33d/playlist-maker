@@ -13,11 +13,13 @@ def get_api_keys():
 if __name__ == "__main__":
     get_api_keys()
 
-    link = "https://open.spotify.com/playlist/28tL7RsJGjCElo3cC8dty8"
-    PLAYLIST_ID = pm.get_playlistid(link)
-    ACCESS_TOKEN = pm.get_token(CLIENT_ID, CLIENT_SECRET)
+    link = "https://open.spotify.com/playlist/6vAVp8M1el9CLRe251q9Mg"
+    PLAYLIST_ID = api.get_playlist_id(link)
+    ACCESS_TOKEN = api.get_token(CLIENT_ID, CLIENT_SECRET)
 
-    tracks = pm.get_tracklist(PLAYLIST_ID, ACCESS_TOKEN)
-    playlist_name = pm.sanitize_filename(get_playlist_name(PLAYLIST_ID, ACCESS_TOKEN))
-    if generate_playlist_file(playlist_name, tracks):
-        print("Playlist file generated successfully")
+    tracks = api.get_tracklist(PLAYLIST_ID, ACCESS_TOKEN)
+    print(tracks)
+
+    # playlist_name = pm.sanitize_filename(get_playlist_name(PLAYLIST_ID, ACCESS_TOKEN))
+    # if generate_playlist_file(playlist_name, tracks):
+    #     print("Playlist file generated successfully")
