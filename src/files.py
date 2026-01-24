@@ -1,12 +1,20 @@
 from os import rename
 import re
 
-# change this to f"{count} - {}"
-def get_new_file_name(location, track) -> str:
-    return f"{counter}/{track[0]} - {track[1]}"
-
 def sanitize_filename(filename: str) -> str:
     return re.sub(r'[\\/:*?"<>|]', '_', filename)
+
+def get_songfiles(location):
+    return os.listdir(location)
+
+def counter(start = 1):
+    n = start
+    white True:
+        yield n
+        n += 1
+
+def get_new_file_name(location, track) -> str:
+    return f"{next(count):03d} - {track["artist"]} - {track["name"]}"
 
 def rename_file(current_name, new_name):
     try:
@@ -14,8 +22,8 @@ def rename_file(current_name, new_name):
         print("")
     except Error as e:
         print(e)
-# ---
 
+# ---
 
 # theres a function get_tracklist() which returns list[str], with the songs in order of the playlist on spotify
 # i have the song mp3 files in a folder
