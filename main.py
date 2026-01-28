@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
-import os
+from os import getenv
+from pathlib import Path
 
 from src import api 
 from src import files
@@ -8,13 +9,14 @@ from src import matching
 def get_api_keys() -> None:
     global CLIENT_ID, CLIENT_SECRET
     load_dotenv()
-    CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
-    CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET") 
+    # CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
+    CLIENT_ID = getenv("SPOTIFY_CLIENT_ID")
+    CLIENT_SECRET = getenv("SPOTIFY_CLIENT_SECRET") 
 
 def init() -> None:
     global PLAYLIST_LINK
     link = str(input("Enter the playlist link:\t")) 
-
+    
 if __name__ == "__main__":
     get_api_keys()
 

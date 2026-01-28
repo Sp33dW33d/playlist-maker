@@ -1,34 +1,6 @@
-"""
-notes
-
-preprocessing is required, damn
-need to strip, probably remove the artist name(?)
-ehh but should i do string based removal? what if i use a different source for the music files. 
-or just that the music file names have a different formatting
-
-i guess i could do searches based on the mp3 file's metadata tags
-but some sources might not provide tags sooo... idk
-maybe i should add 2 different modes
-filename based search, and tag based search
-and maybe for filename based search, i should add different modes to allow for different mp3 file naming formats. eh.
-would be a lot of hard coding maybe
-"""
-# func for getting the song_files
-# func for getting the song_name
-
-# func for getting best name match
-# func for getting artist match
-# func for getting duration match
-# func for calculating overall similarity for one file
-# func for getting best overall match
-
-# func for renaming a specific file
-# func for running the loop
-
 import rapidfuzz
 import os
 import re
-# probably need to use mutagen to get file duration
 
 def normalize_name(name: str) -> str:
     NOISE_WORDS = {
@@ -49,7 +21,14 @@ def normalize_name(name: str) -> str:
 
     return " ".join(words)
 
-def normalize_audio_files(audio_files: list) -> list[str]:
+def normalize_audio_files(audio_files: list[AudioFile]) -> list[AudioFile]:
+    """adds normalized_name to the AudioFile objs"""
+
+    normalized_audio_files = []
+    
+    for audio_file in audio_files:
+        audio_file.normalized_name = normalize_name(audio_file.original_name)
+        normalized_audio_files.append()
     return [normalize_name(file) for file in audio_files]
 
 def normalize_tracks(tracks: list[dict]) -> list[dict]:
@@ -61,6 +40,9 @@ def normalize_tracks(tracks: list[dict]) -> list[dict]:
 def score_title_similarity(song_name: str, file_name: str) -> float:
     return rapidfuzz.partial_ratio(song_name, file_name)
 
+# since im only using normalization for now, artist_similarity assumes the artist's name is also present in the file_name
+# ideal behaviour should be to default to tag based similarity calculation, but resorting to file_name based search if tag doesnt exist
+# will add tags based searching later
 def score_artist_similarity(artist_name: str, file_name: str) -> float:
     return rapidfuzz.partial_ratio(artist_name, file_name)
 
@@ -84,24 +66,22 @@ def compute_match_score(track, audio_file,
 
     return final_score
 
-def find_best_match(tracks: list[dict], audio_file: str):
-    # SCORE_CUTOFF = 0.80
-    # candidates = []
+def find_best_match(tracks: list[dict], audio_file: str, SCORE_CUTOFF = 0.80):
+    candidates = []
 
-    # for track in tracks:
-    #     if compute_match_score(track, audio_files) >= SCORE_CUTOFF:
-    #         candidates.append[track]
-    # return candidates[-1] if candidates else None
+    # after i do find the best match. i need to get the original audio_file_name so i can rename it
+    # but how am i supposed to get the original audio_file_name from the normalized_file_name...?
+    # ugh i guess i need to make a Track class, and a File class
+
+    for track in tracks:
+        if compute_match_score(track, audio_files) >= SCORE_CUTOFF:
+            candidates.append[track]
+    return candidates[-1] if candidates else None
 
     # what the fuck??? ternary operator AND list comprehension? 
-    return [track if compute_match_score(track, audio_file) >= SCORE_CUTOFF][-1] if [track if compute_match_score(track, audio_file) >= SCORE_CUTOFF] else None
+    # return [track if compute_match_score(track, audio_file) >= SCORE_CUTOFF][-1] if [track if compute_match_score(track, audio_file) >= SCORE_CUTOFF] else None
 
 if __name__ == "__main__":
-    # test_song  = {"artist": "Snail's House",
-    #             "name": "Cosmo Funk",
-    #             "duration": 3000}
-        # print(test_song)
-
     song_name = "City Girl - HEARTBREAKER CLUB.mp3"
     audio_files = ['Cement City - Here Comes a Thought.mp3', 'Chevy - UWU (Band Version).mp3', 'Chevy - UWU.mp3', 'City Girl - HEARTBREAKER CLUB.mp3', 'Claire Rosinkranz - Backyard Boy.mp3', "Hyper_Potions_K_K_Cruisin'_From__Animal_Crossing_.mp3", 'Lilypichu - dreamy night.mp3', 'Makzo - Blossom.mp3', 'Mindy Gledhill - I Do Adore.mp3', 'mxmtoon - fever dream (Shawn Wasabi remix).mp3', 'potsu - just friends.mp3', 'Wave Racer - Higher.mp3', '달콤한꿈 - 꽃날 (황진이 OST).mp3']
     

@@ -1,5 +1,6 @@
 import requests as req
 import json
+from src.models import Track
 
 def get_token(client_id, client_secret) -> str:
     "returhs an access token"
@@ -21,16 +22,18 @@ def get_playlist_name(playlist_id, access_token) -> str:
     response = req.get(url = f"https://api.spotify.com/v1/playlists/{playlist_id}", headers = {"Authorization": f"Bearer {access_token}"})
     return response.json()["name"]
 
-def get_tracklist(playlist_id, access_token) -> list[dict]:
+def get_tracklist(playlist_id, access_token) -> list[Track]:
     response = req.get(url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks?limit=50&offset=0", headers = {"Authorization": f"Bearer {access_token}"})
 
     tracklist = []
     while True:
         for item in response.json()["items"]:
-            track_item = {"artist": item["track"]["artists"][0]["name"].lower(),
-                          "name": item["track"]["name"].lower(),
-                          "duration": item["track"]["duration_ms"]}
-            tracklist.append(track_item)
+            tracklist.append(
+                Track(original_name = item["track"]["name"],
+                      normalized_name = None,
+                      duration = item["track"]["duration_ms"],
+                      artist = item["track"]["artists"][0]["name"])
+            ) 
         next = response.json()["next"]
         if next != None:
             response = req.get(url = next, headers = {"Authorization": f"Bearer {access_token}"})
